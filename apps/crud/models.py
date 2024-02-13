@@ -18,6 +18,11 @@ class User(db.Model, UserMixin):
     created_at = db.Column(db.DateTime, default=datetime.now)
     updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 
+    # Set relationship using backref
+    user_images = db.relationship(
+        "UserImage", backref="user", order_by="desc(UserImage.id)"
+    )
+
     # Pass word property
     @property
     def password(self):

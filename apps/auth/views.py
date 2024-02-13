@@ -42,9 +42,10 @@ def signup():
         # store user information to session
         login_user(user)
         # Redirect to user list page if GET parameter doesn't have next key and value
+        # Chage redirect enpoint into detector.index
         next_ = request.args.get("next")
         if next_ is None or not next_.startswith("/"):
-            next_ = url_for("crud.users")
+            next_ = url_for("detector.index")
         return redirect(next_)
     return render_template("auth/signup.html", form=form)
 
@@ -59,7 +60,7 @@ def login():
         # Allow login if user exists and password matches
         if user is not None and user.verify_password(form.password.data):
             login_user(user)
-            return redirect(url_for("crud.users"))
+            return redirect(url_for("detector.index"))
 
         # Set a message when login failed
         flash("メールアドレスかパスワードが不正です。")

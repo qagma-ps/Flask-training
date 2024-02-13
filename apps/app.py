@@ -65,4 +65,10 @@ def create_app(config_key):
     # connect login_manager with app
     login_manager.init_app(app)
 
+    # import views from detector package
+    from apps.detector import views as dt_views
+
+    # register views dt using register_blueprint
+    app.register_blueprint(dt_views.dt)
+
     return app
