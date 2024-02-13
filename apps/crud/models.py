@@ -1,12 +1,13 @@
 from datetime import datetime
 
-from werkzeug.security import generate_password_hash
+from flask_login import UserMixin
+from werkzeug.security import check_password_hash, generate_password_hash
 
-from apps.app import db
+from apps.app import db, login_manager
 
 
-# Create User class inherited db.Model
-class User(db.Model):
+# Create User class inherited db.Model, added UserMixin
+class User(db.Model, UserMixin):
     # Table Name
     __tablename__ = "users"
     # Column
@@ -26,3 +27,17 @@ class User(db.Model):
     @password.setter
     def password(self, password):
         self.password_hash = generate_password_hash(password)
+
+    # Password check
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    # Password duplicate check
+    def is_duplicate_email(self):
+        return User.query.filter_by(email=self.email).first() is not None
+
+
+# make a function to fetch login user information
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)

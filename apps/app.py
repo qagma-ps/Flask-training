@@ -1,6 +1,7 @@
-from pathlib import Path
+# from pathlib import Path
 
 from flask import Flask
+from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
@@ -12,6 +13,14 @@ db = SQLAlchemy()
 
 # countermeasure for CSRF
 csrf = CSRFProtect()
+
+# Make LoginManager instance
+login_manager = LoginManager()
+# specify endpoint to redirect to login_view attribute when not logged in.
+login_manager.login_view = "auth.signup"
+# specify message shown after logged in of login_message attribute
+# Firstly set void
+login_manager.login_message = ""
 
 
 # コンフィグのキーを渡す
@@ -46,5 +55,14 @@ def create_app(config_key):
 
     # register crud views using register_blueprint
     app.register_blueprint(crud_views.crud, url_prefix="/crud")
+
+    # import views from auth package
+    from apps.auth import views as auth_views
+
+    # register auth views using register_blueprint
+    app.register_blueprint(auth_views.auth, url_prefix="/auth")
+
+    # connect login_manager with app
+    login_manager.init_app(app)
 
     return app
